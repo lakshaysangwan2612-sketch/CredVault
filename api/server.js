@@ -82,6 +82,10 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static('public'));
 
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'../public/index.html'));
+}
+);
 app.post('/api/auth/register', wrap(async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password || password.length < 6) return res.status(400).json({ error: 'Name, email and a 6+ char password are required' });
@@ -153,3 +157,5 @@ async function seed() {
 
 mongoose.connect(MONGO_URI).then(loadKeys).then(seed).then(() => app.listen(PORT, () => console.log(`CredVault on http://localhost:${PORT}`)))
   .catch((e) => { console.error('Startup failed:', e.message); process.exit(1); });
+
+module.exports = app;
